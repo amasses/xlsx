@@ -48,7 +48,7 @@ func (r *RowSuite) TestWriteStruct(c *C) {
 	c.Assert(c1, Equals, 20)
 	c.Assert(c2, Equals, 3.94)
 	c.Assert(c3, Equals, false)
-	c.Assert(c4, Equals, testTime.Format("15:04:05 pm 01/02/2006"))
+	c.Assert(c4, Equals, testTime.Format("3:04:05 pm"))
 }
 
 // Test if we can write a slice to a row

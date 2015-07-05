@@ -120,8 +120,6 @@ func (c *Cell) SetTime(t time.Time, format string) {
 	_, offset := time.Now().Zone()
 
 	epochTime := (float64(t.Unix()+int64(offset)) - EPOCH) / SECS_PER_DAY
-
-	fmt.Println("Epoch time: %v", epochTime)
 	c.SetFloatWithFormat(epochTime, format)
 }
 
