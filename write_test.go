@@ -23,7 +23,7 @@ func (r *RowSuite) TestWriteStruct(c *C) {
 		Age       int
 		GPA       float64
 		LikesPHP  bool
-		CreatedAt time.Time //`fmt:"hh:mm:ss am/pm"`
+		CreatedAt time.Time `fmt:"h:mm:ss am/pm"`
 	}
 	testStruct := e{
 		"Eric",
