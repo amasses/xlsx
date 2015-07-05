@@ -1,6 +1,7 @@
 package xlsx
 
 import "reflect"
+import "time"
 
 // Writes an array to row r. Accepts a pointer to array type 'e',
 // and writes the number of columns to write, 'cols'. If 'cols' is < 0,
@@ -52,6 +53,16 @@ func (r *Row) WriteSlice(e interface{}, cols int) int {
 			cell := r.AddCell()
 			cell.SetFloat(v.Index(i).Interface().(float64))
 		}
+	case reflect.Struct:
+		if v.Field(i).Type() == reflect.TypeOf(time.Now()) {
+			field := v.Type().Field(i)
+			format := field.Tag.Get("fmt")
+			if len(format) == 0 {
+				format = "hh:mm:ss am/pm mm/dd/yyyy"
+			}
+			cell := r.AddCell()
+			cell.SetTime(v.Field(i).Interface().(time.Time), format)
+		}
 	}
 
 	return i
@@ -93,6 +104,16 @@ func (r *Row) WriteStruct(e interface{}, cols int) int {
 			cell.SetFloat(v.Field(i).Interface().(float64))
 		case reflect.Bool:
 			cell.SetBool(v.Field(i).Interface().(bool))
+		case reflect.Struct:
+			if v.Field(i).Type() == reflect.TypeOf(time.Now()) {
+				field := v.Type().Field(i)
+				format := field.Tag.Get("fmt")
+				if len(format) == 0 {
+					format = "hh:mm:ss am/pm mm/dd/yyyy"
+				}
+				cell.date1904 = true
+				cell.SetTime(v.Field(i).Interface().(time.Time), format)
+			}
 		default:
 			k-- // nothing set so reset to previous
 		}

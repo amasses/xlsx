@@ -5,6 +5,7 @@ import (
 	"math"
 	"strconv"
 	"strings"
+	"time"
 )
 
 // CellType is an int type for storing metadata about the data type in the cell.
@@ -18,6 +19,11 @@ const (
 	CellTypeBool
 	CellTypeInline
 	CellTypeError
+)
+
+const (
+	EPOCH        float64 = -2082844800.0
+	SECS_PER_DAY float64 = 86400.0
 )
 
 // Cell is a high level structure intended to provide user access to
@@ -107,6 +113,16 @@ func (c *Cell) Float() (float64, error) {
 		return math.NaN(), err
 	}
 	return f, nil
+}
+
+// SetTime sets a cell's value to a time and applies the Excel format to the cell
+func (c *Cell) SetTime(t time.Time, format string) {
+	_, offset := time.Now().Zone()
+
+	epochTime := (float64(t.Unix()+int64(offset)) - EPOCH) / SECS_PER_DAY
+
+	fmt.Println("Epoch time: %v", epochTime)
+	c.SetFloatWithFormat(epochTime, format)
 }
 
 // SetInt64 sets a cell's value to a 64-bit integer.
@@ -278,9 +294,9 @@ func parseTime(c *Cell) string {
 	format := c.GetNumberFormat()
 	// Replace Excel placeholders with Go time placeholders.
 	// For example, replace yyyy with 2006. These are in a specific order,
-    // due to the fact that m is used in month, minute, and am/pm. It would
-    // be easier to fix that with regular expressions, but if it's possible
-    // to keep this simple it would be easier to maintain.
+	// due to the fact that m is used in month, minute, and am/pm. It would
+	// be easier to fix that with regular expressions, but if it's possible
+	// to keep this simple it would be easier to maintain.
 	replacements := []struct{ xltime, gotime string }{
 		{"yyyy", "2006"},
 		{"yy", "06"},

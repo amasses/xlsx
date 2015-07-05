@@ -2,6 +2,7 @@ package xlsx
 
 import (
 	. "gopkg.in/check.v1"
+	"time"
 )
 
 type WriteSuite struct{}
@@ -14,17 +15,22 @@ func (r *RowSuite) TestWriteStruct(c *C) {
 	f = NewFile()
 	sheet := f.AddSheet("Test1")
 	row := sheet.AddRow()
+
+	testTime := time.Now()
+
 	type e struct {
 		FirstName string
 		Age       int
 		GPA       float64
 		LikesPHP  bool
+		CreatedAt time.Time //`fmt:"hh:mm:ss am/pm"`
 	}
 	testStruct := e{
 		"Eric",
 		20,
 		3.94,
 		false,
+		testTime,
 	}
 	row.WriteStruct(&testStruct, -1)
 	c.Assert(row, NotNil)
@@ -33,14 +39,16 @@ func (r *RowSuite) TestWriteStruct(c *C) {
 	c1, e1 := row.Cells[1].Int()
 	c2, e2 := row.Cells[2].Float()
 	c3 := row.Cells[3].Bool()
+	c4 := row.Cells[4].FormattedValue()
+
+	c.Assert(e1, Equals, nil)
+	c.Assert(e2, Equals, nil)
 
 	c.Assert(c0, Equals, "Eric")
 	c.Assert(c1, Equals, 20)
 	c.Assert(c2, Equals, 3.94)
 	c.Assert(c3, Equals, false)
-
-	c.Assert(e1, Equals, nil)
-	c.Assert(e2, Equals, nil)
+	c.Assert(c4, Equals, testTime.Format("15:04:05 pm 01/02/2006"))
 }
 
 // Test if we can write a slice to a row
