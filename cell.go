@@ -117,10 +117,7 @@ func (c *Cell) Float() (float64, error) {
 
 // SetTime sets a cell's value to a time and applies the Excel format to the cell
 func (c *Cell) SetTime(t time.Time, format string) {
-	_, offset := time.Now().Zone()
-
-	epochTime := (float64(t.Unix()+int64(offset)) - EPOCH) / SECS_PER_DAY
-	c.SetFloatWithFormat(epochTime, format)
+	c.SetFloatWithFormat(TimeToExcelTime(t, true), format)
 }
 
 // SetInt64 sets a cell's value to a 64-bit integer.

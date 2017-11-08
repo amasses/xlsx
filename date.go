@@ -96,3 +96,29 @@ func TimeFromExcelTime(excelTime float64, date1904 bool) time.Time {
 	durationPart := time.Duration(dayNanoSeconds * floatPart)
 	return date.Add(durationDays).Add(durationPart)
 }
+
+func TimeToExcelTime(time time.Time, date1904 bool) float64 {
+	const OFFSET1900 = 15022.0
+	const EPOCH = -2209161600.0
+
+	// var jd float64
+	// y := float64(time.Year())
+	// m := float64(int(time.Month()))
+	// d := float64(time.Day())
+	// h := float64(time.Hour())
+	// min := float64(time.Minute())
+	// sec := float64(time.Second())
+
+	// // Convert HMS as well....
+
+	// jd = float64((1461*(y+4800+(m-14)/12))/4 +
+	// 	(367*(m-2-12*((m-14)/12)))/12 -
+	// 	(3*((y+4900+(m-14)/12)/100))/4 +
+	// 	d - 32075 + (((h - 12) / 24) + (min / 1440) + (sec / 86400)))
+
+	// jd -= OFFSET1900
+
+	// return jd - MJD_0
+	_, offset := time.Zone()
+	return (float64(int64(offset)+time.Unix()) - EPOCH) / 86400
+}

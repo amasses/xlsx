@@ -176,11 +176,13 @@ func (f *File) MarshallParts() (map[string]string, error) {
 	}
 	f.styles.reset()
 	for _, sheet := range f.Sheets {
-		xSheet := sheet.makeXLSXSheet(refTable, f.styles)
 		rId := fmt.Sprintf("rId%d", sheetIndex)
 		sheetId := strconv.Itoa(sheetIndex)
 		sheetPath := fmt.Sprintf("worksheets/sheet%d.xml", sheetIndex)
 		partName := "xl/" + sheetPath
+
+		xSheet := sheet.makeXLSXSheet(refTable, f.styles)
+
 		types.Overrides = append(
 			types.Overrides,
 			xlsxOverride{
